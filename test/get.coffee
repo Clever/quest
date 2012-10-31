@@ -14,6 +14,12 @@ describe 'quest', ->
           assert.equal err, 'Options does not include uri'
           done()
 
+      it "detects non-string uri", (done) ->
+        @timeout 20000
+        quest {uri: {}}, (err, resp, body) ->
+          assert.equal err, 'Uri {} is not a string'
+          done()
+
       it 'detects request errors', (done) ->
         @timeout 20000
         uri = 'arhgglserhslfhs'

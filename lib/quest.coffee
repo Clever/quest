@@ -28,6 +28,7 @@ handle_options = (options) -> _(_(handle).values()).map (handler) -> handler opt
 
 module.exports = (options, cb) ->
   return cb 'Options does not include uri' if not options?.uri?
+  return cb "Uri #{JSON.stringify options.uri} is not a string" if not _(options.uri).isString()
   options = _.clone options
 
   normalize_uri options
@@ -38,7 +39,11 @@ module.exports = (options, cb) ->
     port: if request_module is http then 80 else 443
     headers: {}
     method: 'get'
-  _(options).defaults url.parse options.uri
+
+  parsed_uri = null
+  try parsed_uri = url.parse options.uri # Suppress exceptions from url.parse
+  return cb "Failed to parse uri #{options.uri}" if not parsed_uri? # This should never occur
+  _(options).defaults parsed_uri
   _(options.headers).defaults
     'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_3) AppleWebKit/537.16 (KHTML, like Gecko) Chrome/24.0.1297.0 Safari/537.16'
 
