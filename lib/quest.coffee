@@ -4,6 +4,10 @@ https = require 'https'
 _     = require 'underscore'
 url   = require 'url'
 
+isUri = (uri) ->
+  uri_pattern = /^https?:\/\//
+  uri_pattern.test uri
+
 handle =
   form: (options) ->
     return if not options.form?
@@ -20,13 +24,16 @@ handle =
     options.headers['content-type'] = 'application/json'
     options.body = JSON.stringify options.json
 
-normalize_uri = (options) ->
-  uri_pattern = /^https?:\/\//
-  options.uri = "http://#{options.uri}" if not uri_pattern.test options.uri
+normalize_uri = (options) -> options.uri = "http://#{options.uri}" if not isUri options.uri
 
 handle_options = (options) -> _(_(handle).values()).map (handler) -> handler options
 
-module.exports = (options, cb) ->
+should_redirect = (options, resp) ->
+  299 < resp.statusCode < 400 and (options.followAllRedirects or
+  (options.followRedirects and
+  options.method isnt 'PUT' and options.method isnt 'POST' and options.method isnt 'DELETE'))
+
+quest = (options, cb) ->
   return cb 'Options does not include uri' if not options?.uri?
   return cb "Uri #{JSON.stringify options.uri} is not a string" if not _(options.uri).isString()
   options = _.clone options
@@ -39,6 +46,8 @@ module.exports = (options, cb) ->
     port: if request_module is http then 80 else 443
     headers: {}
     method: 'get'
+    followRedirects: true
+    followAllRedirects: false
 
   parsed_uri = null
   try parsed_uri = url.parse options.uri # Suppress exceptions from url.parse
@@ -55,11 +64,31 @@ module.exports = (options, cb) ->
 
   options.method = options.method.toUpperCase()
   req = request_module.request options, (resp) ->
+    resp.request = req
+    if should_redirect options, resp
+      redirect_options = {}
+      _(redirect_options).defaults
+        json: options.json? and options.json # Don't send json bodies, but do parse json
+        method = if options.followAllRedirects then 'GET' else options.method
+        uri: resp.headers.location
+      redirect_options.uri = url.resolve options.href, redirect_options.uri if not isUri redirect_options.uri
+      return quest redirect_options, cb
+
     resp.setEncoding 'utf-8'
-    resp.on 'data', (body) ->
-      body = JSON.parse body if options.json
+    body = ''
+
+    resp.on 'data', (part) -> body += part if part?
+    resp.on 'end', (part) ->
+      body += part if part?
+      try
+        body = JSON.parse body if options.json
+      catch err
+        return cb "Error parsing body as json: #{body}"
       cb null, resp, body
+
   req.on 'error', (err) -> cb err
 
   req.write options.body if options.body?
   req.end()
+
+module.exports = quest

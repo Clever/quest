@@ -97,3 +97,48 @@ describe 'quest', ->
           assert.equal resp.statusCode, 200, "Status code should be 200, is #{resp.statusCode}"
           assert.equal resp.headers.my_param, 'trolling', "Parameter should be trolling, is #{resp.headers.my_param}"
           done safe_err err
+
+      it "doesn't follow redirects when disabled", (done) ->
+        @timeout 20000
+        options =
+          uri: "#{protocol}://httpbin.org/redirect/3"
+          followRedirects: false
+        quest options, (err, resp, body) ->
+          assert not err, "Has error #{err}"
+          assert.equal resp.statusCode, 302, "Status code should be 302, is #{resp.statusCode}"
+          assert.equal resp.headers.location, 'http://httpbin.org/redirect/2'
+          done safe_err err
+
+      it 'follows redirects', (done) ->
+        @timeout 20000
+        options =
+          uri: "#{protocol}://httpbin.org/redirect/3"
+          json: true
+        quest options, (err, resp, body) ->
+          assert not err, "Has error #{err}"
+          assert.equal resp.statusCode, 200, "Status code should be 200, is #{resp.statusCode}"
+          assert.equal body.url, "http://httpbin.org/get"
+          done safe_err err
+
+      it "doesn't follow relative redirects when disabled", (done) ->
+        @timeout 20000
+        options =
+          uri: "#{protocol}://httpbin.org/relative-redirect/3"
+          followRedirects: false
+        quest options, (err, resp, body) ->
+          assert not err, "Has error #{err}"
+          assert.equal resp.statusCode, 302, "Status code should be 302, is #{resp.statusCode}"
+          # As far as I can tell this isn't actually a relative redirect...
+          assert.equal resp.headers.location, 'http://httpbin.org/relative-redirect/2'
+          done safe_err err
+
+      it 'follows relative redirects', (done) ->
+        @timeout 20000
+        options =
+          uri: "#{protocol}://httpbin.org/relative-redirect/3"
+          json: true
+        quest options, (err, resp, body) ->
+          assert not err, "Has error #{err}"
+          assert.equal resp.statusCode, 200, "Status code should be 200, is #{resp.statusCode}"
+          assert.equal body.url, "http://httpbin.org/get"
+          done safe_err err
