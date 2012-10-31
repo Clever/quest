@@ -10,7 +10,7 @@ handle_form = (options) ->
   options.body = qs.stringify(options.form).toString 'utf8'
 
 normalize_uri = (options) ->
-  uri_pattern = /^https?/
+  uri_pattern = /^https?:\/\//
   options.uri = "http://#{options.uri}" if not uri_pattern.test options.uri
 
 handle_qs = (options) ->

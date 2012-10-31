@@ -8,11 +8,22 @@ describe 'quest', ->
     err
   _.each ['https', 'http'], (protocol) ->
     describe protocol, ->
+      it 'supports no protocol', (done) ->
+        options =
+          uri: "httpbin.org/get"
+          json: true
+        quest options, (err, resp, body) ->
+          assert not err, "Has error #{err}"
+          assert.equal resp.statusCode, 200, "Status code should be 200, is #{resp.statusCode}"
+          assert.equal body.headers.Host, 'httpbin.org'
+          done safe_err err
+
       it 'supports simple gets', (done) ->
         options =
           uri: "#{protocol}://httpbin.org/get"
         quest options, (err, resp, body) ->
-          assert.equal resp.statusCode, 200
+          assert not err, "Has error #{err}"
+          assert.equal resp.statusCode, 200, "Status code should be 200, is #{resp.statusCode}"
           assert.equal JSON.parse(body).headers.Host, 'httpbin.org'
           done safe_err err
 
@@ -21,7 +32,8 @@ describe 'quest', ->
           uri: "#{protocol}://httpbin.org/get"
           json: true
         quest options, (err, resp, body) ->
-          assert.equal resp.statusCode, 200
+          assert not err, "Has error #{err}"
+          assert.equal resp.statusCode, 200, "Status code should be 200, is #{resp.statusCode}"
           assert.equal body.headers.Host, 'httpbin.org'
           done safe_err err
 
@@ -31,7 +43,8 @@ describe 'quest', ->
           uri: "#{protocol}://httpbin.org/user-agent"
           json: true
         quest options, (err, resp, body) ->
-          assert.equal resp.statusCode, 200
+          assert not err, "Has error #{err}"
+          assert.equal resp.statusCode, 200, "Status code should be 200, is #{resp.statusCode}"
           assert.equal body['user-agent'], default_user_agent
           done safe_err err
 
@@ -43,6 +56,7 @@ describe 'quest', ->
           headers:
             'user-agent': other_user_agent
         quest options, (err, resp, body) ->
-          assert.equal resp.statusCode, 200
+          assert not err, "Has error #{err}"
+          assert.equal resp.statusCode, 200, "Status code should be 200, is #{resp.statusCode}"
           assert.equal body['user-agent'], other_user_agent
           done safe_err err
