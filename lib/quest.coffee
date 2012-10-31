@@ -29,8 +29,7 @@ normalize_uri = (options) -> options.uri = "http://#{options.uri}" if not isUri 
 handle_options = (options) -> _(_(handle).values()).map (handler) -> handler options
 
 should_redirect = (options, resp) ->
-  299 < resp.statusCode < 400 and (options.followAllRedirects or
-  (options.followRedirects and
+  299 < resp.statusCode < 400 and (options.followAllRedirects or (options.followRedirects and
   options.method isnt 'PUT' and options.method isnt 'POST' and options.method isnt 'DELETE'))
 
 quest = (options, cb) ->
@@ -48,6 +47,7 @@ quest = (options, cb) ->
     method: 'get'
     followRedirects: true
     followAllRedirects: false
+    maxRedirects: 10
 
   parsed_uri = null
   try parsed_uri = url.parse options.uri # Suppress exceptions from url.parse
@@ -66,11 +66,13 @@ quest = (options, cb) ->
   req = request_module.request options, (resp) ->
     resp.request = req
     if should_redirect options, resp
+      return req.emit 'error', 'Exceeded max redirects' if options.maxRedirects is 0
       redirect_options = {}
       _(redirect_options).defaults
         json: options.json? and options.json # Don't send json bodies, but do parse json
         method = if options.followAllRedirects then 'GET' else options.method
         uri: resp.headers.location
+        maxRedirects: options.maxRedirects-1
       redirect_options.uri = url.resolve options.href, redirect_options.uri if not isUri redirect_options.uri
       return quest redirect_options, cb
 
@@ -83,11 +85,10 @@ quest = (options, cb) ->
       try
         body = JSON.parse body if options.json
       catch err
-        return cb "Error parsing body as json: #{body}"
-      cb null, resp, body
-
-  req.on 'error', (err) -> cb err
-
+        return req.emit 'error', "Error parsing body as json: #{body}"
+      req.emit 'end', null, resp, body
+  req.on 'error', cb
+  req.on 'end', cb
   req.write options.body if options.body?
   req.end()
 

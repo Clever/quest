@@ -142,3 +142,13 @@ describe 'quest', ->
           assert.equal resp.statusCode, 200, "Status code should be 200, is #{resp.statusCode}"
           assert.equal body.url, "http://httpbin.org/get"
           done safe_err err
+
+      it 'has a maximum number of redirects', (done) ->
+        @timeout 20000
+        options =
+          uri: "#{protocol}://httpbin.org/redirect/3"
+          json: true
+          maxRedirects: 2
+        quest options, (err, resp, body) ->
+          assert.equal err, 'Exceeded max redirects'
+          done()
