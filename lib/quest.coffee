@@ -26,8 +26,8 @@ normalize_uri = (options) ->
 
 handle_options = (options) -> _(_(handle).values()).map (handler) -> handler options
 
-module.exports = (options={}, cb) ->
-  return cb 'Options does not include uri' if not options.uri?
+module.exports = (options, cb) ->
+  return cb 'Options does not include uri' if not options?.uri?
   options = _.clone options
 
   normalize_uri options

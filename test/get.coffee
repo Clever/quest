@@ -1,4 +1,4 @@
-quest  = require "#{__dirname}/../lib/quest"
+quest  = require "#{__dirname}/../index"
 assert = require 'assert'
 _ = require 'underscore'
 
