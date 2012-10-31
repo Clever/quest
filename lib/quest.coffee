@@ -41,6 +41,7 @@ module.exports = (options={}, cb) ->
   _(options).defaults
     port: if request_module is http then 80 else 443
     headers: {}
+    method: 'get'
   _(options.headers).defaults
     'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_3) AppleWebKit/537.16 (KHTML, like Gecko) Chrome/24.0.1297.0 Safari/537.16'
 
@@ -52,6 +53,7 @@ module.exports = (options={}, cb) ->
     options.body = new Buffer options.body
     options.headers['content-length'] = options.body.length
 
+  options.method = options.method.toUpperCase()
   req = request_module.request options, (resp) ->
     resp.setEncoding 'utf-8'
     resp.on 'data', (body) ->
