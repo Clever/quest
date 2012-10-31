@@ -9,6 +9,7 @@ describe 'quest', ->
   _.each ['https', 'http'], (protocol) ->
     describe protocol, ->
       it 'posts some json data', (done) ->
+        @timeout 20000
         json = my_param: 'trolling'
         options =
           uri: "#{protocol}://httpbin.org/post"
@@ -21,6 +22,7 @@ describe 'quest', ->
           done safe_err err
 
       it 'posts some form data', (done) ->
+        @timeout 20000
         form = my_param: 'trolling'
         options =
           uri: "#{protocol}://httpbin.org/post"
