@@ -1,4 +1,4 @@
-quest  = require "#{__dirname}/../index"
+quest  = require "#{__dirname}/../lib/quest"
 assert = require 'assert'
 _ = require 'underscore'
 
@@ -8,6 +8,18 @@ describe 'quest', ->
     err
   _.each ['https', 'http'], (protocol) ->
     describe protocol, ->
+      it "detects no uri", (done) ->
+        quest {}, (err, resp, body) ->
+          assert err, 'Options does not include uri'
+          done()
+
+      it 'detects malformed uri', (done) ->
+        uri = 'arhgglserhslfhs'
+        options = uri: uri
+        quest options, (err, resp, body) ->
+          assert err, "Failed to parse uri #{uri}"
+          done()
+
       it 'supports no protocol', (done) ->
         options =
           uri: "httpbin.org/get"
@@ -59,4 +71,15 @@ describe 'quest', ->
           assert not err, "Has error #{err}"
           assert.equal resp.statusCode, 200, "Status code should be 200, is #{resp.statusCode}"
           assert.equal body['user-agent'], other_user_agent
+          done safe_err err
+
+      it 'allows you to set a querystring parameter', (done) ->
+        options =
+          uri: "#{protocol}://httpbin.org/response-headers"
+          qs:
+            my_param: 'trolling'
+        quest options, (err, resp, body) ->
+          assert not err, "Has error #{err}"
+          assert.equal resp.statusCode, 200, "Status code should be 200, is #{resp.statusCode}"
+          assert.equal resp.headers.my_param, 'trolling', "Parameter should be trolling, is #{resp.headers.my_param}"
           done safe_err err

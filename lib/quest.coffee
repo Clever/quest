@@ -15,7 +15,7 @@ normalize_uri = (options) ->
 
 handle_qs = (options) ->
   return if not options.qs?
-  options.path = "#{options.path}#{qs.stringify options.qs}"
+  options.path = "#{options.path}?#{qs.stringify options.qs}"
 
 handle_json = (options) ->
   return if not options.json?
@@ -48,6 +48,8 @@ module.exports = (options={}, cb) ->
   parsed_uri = url.parse options.uri
   return cb "Failed to parse uri #{options.uri}" if not parsed_uri?
   _(options).defaults parsed_uri
+
+  handle_options options
 
   if options.body?
     options.body = new Buffer options.body
