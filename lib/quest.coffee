@@ -24,8 +24,7 @@ normalize_uri = (options) ->
   uri_pattern = /^https?:\/\//
   options.uri = "http://#{options.uri}" if not uri_pattern.test options.uri
 
-handle_options = (options) ->
-  _(_(handle).values()).map (handler) -> handler options
+handle_options = (options) -> _(_(handle).values()).map (handler) -> handler options
 
 module.exports = (options={}, cb) ->
   return cb 'Options does not include uri' if not options.uri?
@@ -58,7 +57,6 @@ module.exports = (options={}, cb) ->
     resp.on 'data', (body) ->
       body = JSON.parse body if options.json
       cb null, resp, body
-
   req.on 'error', (err) -> cb err
 
   req.write options.body if options.body?
