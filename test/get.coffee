@@ -10,14 +10,14 @@ describe 'quest', ->
     describe protocol, ->
       it "detects no uri", (done) ->
         quest {}, (err, resp, body) ->
-          assert err, 'Options does not include uri'
+          assert.equal err, 'Options does not include uri'
           done()
 
-      it 'detects malformed uri', (done) ->
+      it 'detects request errors', (done) ->
         uri = 'arhgglserhslfhs'
         options = uri: uri
         quest options, (err, resp, body) ->
-          assert err, "Failed to parse uri #{uri}"
+          assert.equal err.code, "ENOTFOUND"
           done()
 
       it 'supports no protocol', (done) ->
