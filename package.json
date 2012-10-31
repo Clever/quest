@@ -18,6 +18,7 @@
     "npm": ">=1.1.5"
   },
   "scripts": {
-    "test": "make -B test"
+    "test": "make -B test",
+    "test-cov": "make -B test-cov"
   }
 }
