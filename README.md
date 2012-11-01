@@ -53,5 +53,7 @@ quest {uri: 'www.google.com', jar: j}, (err, resp, body) ->
 
 ## Vs. request
 Clever wrote quest after we had decided we'd spent too long diagnosing bugs in the third-party `request` module for node. What are the advantages of quest?
+
 1. No global state
+
 2. 1/10th the lines of code
