@@ -5,10 +5,6 @@ _         = require 'underscore'
 url       = require 'url'
 cookiejar = require 'cookiejar'
 
-isUri = (uri) ->
-  uri_pattern = /^https?:\/\//
-  uri_pattern.test uri
-
 handle =
   form: (options) ->
     return if not options.form?
@@ -31,6 +27,7 @@ handle =
     options.headers.cookie = if not options.headers.cookie? then '' else "#{options.headeers.cookie}; "
     options.headers.cookie = "#{options.headers.cookie}#{cookie_string}"
 
+is_uri = (uri) -> /^https?:\/\//.test uri
 normalize_uri = (options) -> options.uri = "http://#{options.uri}" if not isUri options.uri
 
 handle_options = (options) -> _(_(handle).values()).map (handler) -> handler options
