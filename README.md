@@ -8,7 +8,7 @@
 
 ## Super simple to use
 
-Quest is designed to be the simplest way possible to make http calls. It supports HTTPS and follows redirects by default.
+Quest is designed to be the simplest way possible to make http calls, as well as being a drop-in replacement for the popular `request` library. It supports HTTPS and follows redirects by default.
 
 ```coffeescript
 quest = require 'quest'
