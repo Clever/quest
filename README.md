@@ -58,4 +58,4 @@ Clever wrote quest after we had decided we'd spent too long diagnosing bugs in t
 
 2. Cleaner codebase: 1/10th as many lines of code
 
-3. Less bugs
+3. Fewer bugs
