@@ -64,7 +64,10 @@ quest = (options, cb) ->
 
   options.method = options.method.toUpperCase()
   req = request_module.request options, (resp) ->
-    resp.request = req
+    the_request_info = {}
+    _(the_request_info).extend req
+    _(the_request_info).extend options
+    resp.request = the_request_info
     if should_redirect options, resp
       return req.emit 'error', 'Exceeded max redirects' if options.maxRedirects is 0
       redirect_options = {}
