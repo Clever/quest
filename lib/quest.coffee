@@ -28,7 +28,7 @@ handle =
     options.headers.cookie = "#{options.headers.cookie}#{cookie_string}"
 
 is_uri = (uri) -> /^https?:\/\//.test uri
-normalize_uri = (options) -> options.uri = "http://#{options.uri}" if not isUri options.uri
+normalize_uri = (options) -> options.uri = "http://#{options.uri}" if not is_uri options.uri
 
 handle_options = (options) -> _(_(handle).values()).map (handler) -> handler options
 
@@ -87,7 +87,7 @@ quest = (options, cb) ->
         uri: resp.headers.location
         maxRedirects: options.maxRedirects-1
         jar: options.jar
-      redirect_options.uri = url.resolve options.href, redirect_options.uri if not isUri redirect_options.uri
+      redirect_options.uri = url.resolve options.href, redirect_options.uri if not is_uri redirect_options.uri
       return quest redirect_options, cb
 
     resp.setEncoding 'utf-8'
