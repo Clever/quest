@@ -56,4 +56,4 @@ Clever wrote quest after we had decided we'd spent too long diagnosing bugs in t
 
 1. No global state
 
-2. 1/10th the lines of code
+2. Cleaner codebase: 1/10th as many lines of code
