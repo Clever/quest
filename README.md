@@ -38,7 +38,7 @@ If you want to use a custom cookie jar (instead of letting quest use its own def
 j = quest.jar()
 quest {uri: 'www.google.com', jar: j}, () ->
  quest {uri: 'images.google.com', jar: j}, () ->
-   # The request to Google images was sent with any cookies that the original request to Google set
+   # The request to Google images was sent with any cookies that were set by the original request to Google
 ```
 
 You can also set your own cookies when you specify a jar:
