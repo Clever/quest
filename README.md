@@ -1,5 +1,7 @@
 # Quest - massively simplified, super lightweight HTTP requests
 
+[![Build Status](https://travis-ci.org/Clever/quest.png)](https://travis-ci.org/Clever/quest)
+
 ## Install
 
 <pre>
