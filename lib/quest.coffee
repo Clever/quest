@@ -1,8 +1,9 @@
-qs    = require 'qs'
-http  = require 'http'
-https = require 'https'
-_     = require 'underscore'
-url   = require 'url'
+qs        = require 'qs'
+http      = require 'http'
+https     = require 'https'
+_         = require 'underscore'
+url       = require 'url'
+cookiejar = require 'cookiejar'
 
 isUri = (uri) ->
   uri_pattern = /^https?:\/\//
@@ -23,6 +24,12 @@ handle =
     return if options.json is true
     options.headers['content-type'] = 'application/json'
     options.body = JSON.stringify options.json
+  jar: (options) ->
+    cookies = options.jar.getCookies options
+    cookie_string = _(cookies).map (c) -> c.toValueString()
+    cookie_string = cookie_string.join '; '
+    options.headers.cookie = if not options.headers.cookie? then '' else "#{options.headeers.cookie}; "
+    options.headers.cookie = "#{options.headers.cookie}#{cookie_string}"
 
 normalize_uri = (options) -> options.uri = "http://#{options.uri}" if not isUri options.uri
 
@@ -48,6 +55,7 @@ quest = (options, cb) ->
     followRedirects: true
     followAllRedirects: false
     maxRedirects: 10
+    jar: new cookiejar.CookieJar
 
   parsed_uri = null
   try parsed_uri = url.parse options.uri # Suppress exceptions from url.parse
@@ -68,6 +76,11 @@ quest = (options, cb) ->
     _(the_request_info).extend req
     _(the_request_info).extend options
     resp.request = the_request_info
+
+    cookies = resp?.headers?['set-cookie']
+    if options.jar isnt false and cookies?
+      options.jar.setCookies if _(cookies).isArray() then cookies else [cookies]
+
     if should_redirect options, resp
       return req.emit 'error', 'Exceeded max redirects' if options.maxRedirects is 0
       redirect_options = {}
@@ -76,6 +89,7 @@ quest = (options, cb) ->
         method = if options.followAllRedirects then 'GET' else options.method
         uri: resp.headers.location
         maxRedirects: options.maxRedirects-1
+        jar: options.jar
       redirect_options.uri = url.resolve options.href, redirect_options.uri if not isUri redirect_options.uri
       return quest redirect_options, cb
 
@@ -94,5 +108,14 @@ quest = (options, cb) ->
   req.on 'end', cb
   req.write options.body if options.body?
   req.end()
+
+# Make our jar support the same interface as request's
+quest.jar = () ->
+  jar = cookiejar.CookieJar()
+  jar.add = jar.setCookie
+  jar.get = (uri) -> jar.getCookies url.parse uri
+  jar
+
+quest.cookie = cookiejar.Cookie
 
 module.exports = quest

@@ -1,6 +1,7 @@
 quest  = require "#{__dirname}/../index"
 assert = require 'assert'
-_ = require 'underscore'
+_      = require 'underscore'
+async  = require 'async'
 
 describe 'quest', ->
   safe_err = (err) ->
@@ -152,3 +153,55 @@ describe 'quest', ->
         quest options, (err, resp, body) ->
           assert.equal err, 'Exceeded max redirects'
           done()
+
+      it 'supports custom cookie jars', (done) ->
+        @timeout 20000
+        j = quest.jar()
+        cookie = quest.cookie 'my_param=trolling'
+        j.add cookie
+        options =
+          uri: "#{protocol}://httpbin.org/cookies"
+          jar: j
+          json: true
+        quest options, (err, resp, body) ->
+          assert not err, "Has error #{err}"
+          assert.equal resp.statusCode, 200, "Status code should be 200, is #{resp.statusCode}"
+          assert.equal _(body.cookies).keys().length, 1
+          assert.equal body.cookies.my_param, 'trolling'
+          done safe_err err
+
+      it 'stores cookies', (done) ->
+        @timeout 20000
+        j = quest.jar()
+        uri = "#{protocol}://httpbin.org/cookies/set"
+        async.waterfall [
+          (cb_wf) ->
+            options =
+              uri: uri
+              qs:
+                my_param: 'trolling'
+                my_param2: 'trolling2'
+              jar: j
+              json: true
+            quest options, cb_wf
+          (resp, body, cb_wf) ->
+            assert.equal resp.statusCode, 200, "Status code should be 200, is #{resp.statusCode}"
+            cookies = j.get uri
+            assert.equal cookies.length, 2
+            assert.equal cookies[0].name, 'my_param'
+            assert.equal cookies[0].value, 'trolling'
+            assert.equal cookies[1].name, 'my_param2'
+            assert.equal cookies[1].value, 'trolling2'
+
+            options =
+              uri: "#{protocol}://httpbin.org/cookies"
+              jar: j
+              json: true
+            quest options, cb_wf
+          (resp, body, cb_wf) ->
+            assert.equal resp.statusCode, 200, "Status code should be 200, is #{resp.statusCode}"
+            assert.equal _(body.cookies).keys().length, 2
+            assert.equal body.cookies.my_param, 'trolling'
+            assert.equal body.cookies.my_param2, 'trolling2'
+            cb_wf()
+        ], (err) -> done safe_err err
