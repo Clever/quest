@@ -26,7 +26,7 @@ describe 'quest', ->
         uri = 'arhgglserhslfhs'
         options = uri: uri
         quest options, (err, resp, body) ->
-          assert.equal err.code, "ENOTFOUND"
+          assert.equal err?.code, "ENOTFOUND"
           done()
 
       it 'supports no protocol', (done) ->
@@ -36,8 +36,8 @@ describe 'quest', ->
           json: true
         quest options, (err, resp, body) ->
           assert not err, "Has error #{err}"
-          assert.equal resp.statusCode, 200, "Status code should be 200, is #{resp.statusCode}"
-          assert.equal body.headers.Host, 'httpbin.org'
+          assert.equal resp?.statusCode, 200, "Status code should be 200, is #{resp?.statusCode}"
+          assert.equal body?.headers?.Host, 'httpbin.org'
           done safe_err err
 
       it 'supports simple gets', (done) ->
@@ -46,8 +46,8 @@ describe 'quest', ->
           uri: "#{protocol}://httpbin.org/get"
         quest options, (err, resp, body) ->
           assert not err, "Has error #{err}"
-          assert.equal resp.statusCode, 200, "Status code should be 200, is #{resp.statusCode}"
-          assert.equal JSON.parse(body).headers.Host, 'httpbin.org'
+          assert.equal resp?.statusCode, 200, "Status code should be 200, is #{resp?.statusCode}"
+          assert.equal JSON.parse(body)?.headers?.Host, 'httpbin.org'
           done safe_err err
 
       it 'supports interpreting responses as json', (done) ->
@@ -57,8 +57,8 @@ describe 'quest', ->
           json: true
         quest options, (err, resp, body) ->
           assert not err, "Has error #{err}"
-          assert.equal resp.statusCode, 200, "Status code should be 200, is #{resp.statusCode}"
-          assert.equal body.headers.Host, 'httpbin.org'
+          assert.equal resp?.statusCode, 200, "Status code should be 200, is #{resp?.statusCode}"
+          assert.equal body?.headers?.Host, 'httpbin.org'
           done safe_err err
 
       it 'has a default user-agent', (done) ->
@@ -69,8 +69,8 @@ describe 'quest', ->
           json: true
         quest options, (err, resp, body) ->
           assert not err, "Has error #{err}"
-          assert.equal resp.statusCode, 200, "Status code should be 200, is #{resp.statusCode}"
-          assert.equal body['user-agent'], default_user_agent
+          assert.equal resp?.statusCode, 200, "Status code should be 200, is #{resp?.statusCode}"
+          assert.equal body?['user-agent'], default_user_agent
           done safe_err err
 
       it 'allows you to modify the headers', (done) ->
@@ -83,8 +83,8 @@ describe 'quest', ->
             'user-agent': other_user_agent
         quest options, (err, resp, body) ->
           assert not err, "Has error #{err}"
-          assert.equal resp.statusCode, 200, "Status code should be 200, is #{resp.statusCode}"
-          assert.equal body['user-agent'], other_user_agent
+          assert.equal resp?.statusCode, 200, "Status code should be 200, is #{resp?.statusCode}"
+          assert.equal body?['user-agent'], other_user_agent
           done safe_err err
 
       it 'allows you to set a querystring parameter', (done) ->
@@ -95,8 +95,8 @@ describe 'quest', ->
             my_param: 'trolling'
         quest options, (err, resp, body) ->
           assert not err, "Has error #{err}"
-          assert.equal resp.statusCode, 200, "Status code should be 200, is #{resp.statusCode}"
-          assert.equal resp.headers.my_param, 'trolling', "Parameter should be trolling, is #{resp.headers.my_param}"
+          assert.equal resp?.statusCode, 200, "Status code should be 200, is #{resp?.statusCode}"
+          assert.equal resp?.headers?.my_param, 'trolling', "Parameter should be trolling, is #{resp?.headers?.my_param}"
           done safe_err err
 
       it "doesn't follow redirects when disabled", (done) ->
@@ -106,8 +106,8 @@ describe 'quest', ->
           followRedirects: false
         quest options, (err, resp, body) ->
           assert not err, "Has error #{err}"
-          assert.equal resp.statusCode, 302, "Status code should be 302, is #{resp.statusCode}"
-          assert.equal resp.headers.location, 'http://httpbin.org/redirect/2'
+          assert.equal resp?.statusCode, 302, "Status code should be 302, is #{resp?.statusCode}"
+          assert.equal resp?.headers?.location, 'http://httpbin.org/redirect/2'
           done safe_err err
 
       it 'follows redirects', (done) ->
@@ -117,8 +117,8 @@ describe 'quest', ->
           json: true
         quest options, (err, resp, body) ->
           assert not err, "Has error #{err}"
-          assert.equal resp.statusCode, 200, "Status code should be 200, is #{resp.statusCode}"
-          assert.equal body.url, "http://httpbin.org/get"
+          assert.equal resp?.statusCode, 200, "Status code should be 200, is #{resp?.statusCode}"
+          assert.equal body?.url, "http://httpbin.org/get"
           done safe_err err
 
       it "doesn't follow relative redirects when disabled", (done) ->
@@ -128,9 +128,9 @@ describe 'quest', ->
           followRedirects: false
         quest options, (err, resp, body) ->
           assert not err, "Has error #{err}"
-          assert.equal resp.statusCode, 302, "Status code should be 302, is #{resp.statusCode}"
+          assert.equal resp?.statusCode, 302, "Status code should be 302, is #{resp?.statusCode}"
           # As far as I can tell this isn't actually a relative redirect...
-          assert.equal resp.headers.location, 'http://httpbin.org/relative-redirect/2'
+          assert.equal resp?.headers?.location, 'http://httpbin.org/relative-redirect/2'
           done safe_err err
 
       it 'follows relative redirects', (done) ->
@@ -140,8 +140,8 @@ describe 'quest', ->
           json: true
         quest options, (err, resp, body) ->
           assert not err, "Has error #{err}"
-          assert.equal resp.statusCode, 200, "Status code should be 200, is #{resp.statusCode}"
-          assert.equal body.url, "http://httpbin.org/get"
+          assert.equal resp?.statusCode, 200, "Status code should be 200, is #{resp?.statusCode}"
+          assert.equal body?.url, "http://httpbin.org/get"
           done safe_err err
 
       it 'has a maximum number of redirects', (done) ->
@@ -165,9 +165,9 @@ describe 'quest', ->
           json: true
         quest options, (err, resp, body) ->
           assert not err, "Has error #{err}"
-          assert.equal resp.statusCode, 200, "Status code should be 200, is #{resp.statusCode}"
-          assert.equal _(body.cookies).keys().length, 1
-          assert.equal body.cookies.my_param, 'trolling'
+          assert.equal resp?.statusCode, 200, "Status code should be 200, is #{resp?.statusCode}"
+          assert.equal _(body?.cookies)?.keys()?.length, 1
+          assert.equal body?.cookies?.my_param, 'trolling'
           done safe_err err
 
       it 'stores cookies', (done) ->
@@ -185,13 +185,13 @@ describe 'quest', ->
               json: true
             quest options, cb_wf
           (resp, body, cb_wf) ->
-            assert.equal resp.statusCode, 200, "Status code should be 200, is #{resp.statusCode}"
+            assert.equal resp?.statusCode, 200, "Status code should be 200, is #{resp?.statusCode}"
             cookies = j.get uri
             assert.equal cookies.length, 2
-            assert.equal cookies[0].name, 'my_param'
-            assert.equal cookies[0].value, 'trolling'
-            assert.equal cookies[1].name, 'my_param2'
-            assert.equal cookies[1].value, 'trolling2'
+            assert.equal cookies[0]?.name, 'my_param'
+            assert.equal cookies[0]?.value, 'trolling'
+            assert.equal cookies[1]?.name, 'my_param2'
+            assert.equal cookies[1]?.value, 'trolling2'
 
             options =
               uri: "#{protocol}://httpbin.org/cookies"
@@ -199,9 +199,9 @@ describe 'quest', ->
               json: true
             quest options, cb_wf
           (resp, body, cb_wf) ->
-            assert.equal resp.statusCode, 200, "Status code should be 200, is #{resp.statusCode}"
-            assert.equal _(body.cookies).keys().length, 2
-            assert.equal body.cookies.my_param, 'trolling'
-            assert.equal body.cookies.my_param2, 'trolling2'
+            assert.equal resp?.statusCode, 200, "Status code should be 200, is #{resp?.statusCode}"
+            assert.equal _(body?.cookies)?.keys().length, 2
+            assert.equal body?.cookies?.my_param, 'trolling'
+            assert.equal body?.cookies?.my_param2, 'trolling2'
             cb_wf()
         ], (err) -> done safe_err err
