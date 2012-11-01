@@ -27,10 +27,10 @@ quest 'www.google.com', (err, response, body) ->
 * `followRedirect` - follow HTTP 3xx responses as redirects. defaults to true
 * `followAllRedirects` - follow non-GET HTTP 3xx responses as redirects. defaults to false
 * `maxRedirects` - the maximum number of redirects to follow. defaults to 10
-* `jar` - set to `false` if you don't want cookies to be remembered for future use. optionally pass in your own custom cookie jar (see Cookies below)
+* `jar` - cookies are enabled by default. set to `false` to disable. optionally pass in your own custom cookie jar (see Cookies below)
 
 ## Cookies
-Cookies are enabled by default (so they can be used in subsequent requests). To disable cookies set jar to false.
+Cookies are enabled by default. This means that if your requests involved redirection, any redirects will contain cookies set prior. To disable cookies set jar to false.
 
 If you want to use a custom cookie jar (instead of letting quest use its own default cookie jar) you do so by specifying a jar as an option:
 
@@ -41,7 +41,7 @@ quest {uri: 'www.google.com', jar: j}, () ->
    # The request to Google images was sent with any cookies that were set by the original request to Google
 ```
 
-You can also set your own cookies when you specify a jar:
+Note that any cookies that earlier requests set are set in your custom jar, so you can use them for later request. You can also set your own cookies when you specify a jar:
 
 ```coffeescript
 j = quest.jar()
@@ -50,3 +50,8 @@ j.add cookie
 quest {uri: 'www.google.com', jar: j}, (err, resp, body) ->
   # The request to Google was sent with the cookie that you specified
 ```
+
+## Vs. request
+Clever wrote quest after we had decided we'd spent too long diagnosing bugs in the third-party `request` module for node. What are the advantages of quest?
+1. No global state
+2. 1/10th the lines of code
