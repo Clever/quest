@@ -45,7 +45,7 @@ You can also set your own cookies when you specify a jar:
 
 ```coffeescript
 j = quest.jar()
-cookie = request.cookie 'your_cookie_here'
+cookie = quest.cookie 'your_cookie_here'
 j.add cookie
 quest {uri: 'www.google.com', jar: j}, (err, resp, body) ->
   # The request to Google was sent with the cookie that you specified
