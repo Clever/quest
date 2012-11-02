@@ -34,6 +34,7 @@ should_redirect = (options, resp) ->
   options.method isnt 'PUT' and options.method isnt 'POST' and options.method isnt 'DELETE'))
 
 quest = (options, cb) ->
+  options.uri = options.url if options.url? and not options.uri?
   return cb 'Options does not include uri' if not options?.uri?
   return cb "Uri #{JSON.stringify options.uri} is not a string" if not _(options.uri).isString()
   options = _.clone options
