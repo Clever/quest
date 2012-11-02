@@ -21,16 +21,13 @@ handle =
     options.headers['content-type'] = 'application/json'
     options.body = JSON.stringify options.json
   jar: (options) ->
-    cookies = options.jar.getCookies options
-    cookie_string = _(cookies).map (c) -> c.toValueString()
-    cookie_string = cookie_string.join '; '
+    cookie_string = _(options.jar.getCookies options).map((c) -> c.toValueString()).join '; '
     options.headers.cookie = if not options.headers.cookie? then '' else "#{options.headeers.cookie}; "
     options.headers.cookie = "#{options.headers.cookie}#{cookie_string}"
+handle_options = (options) -> _(_(handle).values()).map (handler) -> handler options
 
 is_uri = (uri) -> /^https?:\/\//.test uri
 normalize_uri = (options) -> options.uri = "http://#{options.uri}" if not is_uri options.uri
-
-handle_options = (options) -> _(_(handle).values()).map (handler) -> handler options
 
 should_redirect = (options, resp) ->
   299 < resp.statusCode < 400 and (options.followAllRedirects or (options.followRedirects and
@@ -60,24 +57,18 @@ quest = (options, cb) ->
   _(options).defaults parsed_uri
   _(options.headers).defaults
     'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_3) AppleWebKit/537.16 (KHTML, like Gecko) Chrome/24.0.1297.0 Safari/537.16'
-
   handle_options options
-
   if options.body?
     options.body = new Buffer options.body
     options.headers['content-length'] = options.body.length
-
   options.method = options.method.toUpperCase()
+
   req = request_module.request options, (resp) ->
-    the_request_info = {}
-    _(the_request_info).extend req
-    _(the_request_info).extend options
-    resp.request = the_request_info
+    resp.request = _(_({}).extend(req)).extend options
 
     cookies = resp?.headers?['set-cookie']
     if options.jar isnt false and cookies?
       options.jar.setCookies if _(cookies).isArray() then cookies else [cookies]
-
     if should_redirect options, resp
       return req.emit 'error', 'Exceeded max redirects' if options.maxRedirects is 0
       redirect_options = {}
@@ -90,9 +81,8 @@ quest = (options, cb) ->
       redirect_options.uri = url.resolve options.href, redirect_options.uri if not is_uri redirect_options.uri
       return quest redirect_options, cb
 
-    resp.setEncoding 'utf-8'
     body = ''
-
+    resp.setEncoding 'utf-8'
     resp.on 'data', (part) -> body += part if part?
     resp.on 'end', (part) ->
       body += part if part?
@@ -112,7 +102,5 @@ quest.jar = () ->
   jar.add = jar.setCookie
   jar.get = (uri) -> jar.getCookies url.parse uri
   jar
-
 quest.cookie = cookiejar.Cookie
-
 module.exports = quest
