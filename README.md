@@ -30,6 +30,7 @@ quest 'www.google.com', (err, response, body) ->
 * `followAllRedirects` - follow non-GET HTTP 3xx responses as redirects. defaults to false
 * `maxRedirects` - the maximum number of redirects to follow. defaults to 10
 * `jar` - cookies are enabled by default. set to `false` to disable. optionally pass in your own custom cookie jar (see Cookies below)
+* `timeout` - integer containing the number of milliseconds to wait for a request to respond before aborting the request
 
 ## Cookies
 Cookies are enabled by default. This means that if your requests involved redirection, any redirects will contain cookies set prior. To disable cookies, set jar to false.

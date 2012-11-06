@@ -206,10 +206,23 @@ describe 'quest', ->
             cb_wf()
         ], (err) -> done safe_err err
 
+      it 'supports timeouts', (done) ->
+        @timeout 20000
+        options =
+          uri: "#{protocol}://httpbin.org:88/get"
+          timeout: 10000
+        quest options, (err, resp, body) ->
+          assert err
+          assert.equal err?.code, "ETIMEDOUT"
+          done()
+
       it 'supports changing the port', (done) ->
         @timeout 20000
         options =
           uri: "#{protocol}://httpbin.org:81334/get"
+          timeout: 10000
         quest options, (err, resp, body) ->
           assert err
+          # Produces ECONNREFUSED locally but ETIMEDOUT on travis
+          # assert.equal err?.code, "ECONNREFUSED"
           done()

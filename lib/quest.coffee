@@ -51,6 +51,7 @@ quest = (options, cb) ->
     followAllRedirects: false
     maxRedirects: 10
     jar: new cookiejar.CookieJar
+    ended: state: false
 
   parsed_uri = null
   try parsed_uri = url.parse options.uri # Suppress exceptions from url.parse
@@ -78,6 +79,7 @@ quest = (options, cb) ->
         uri: resp.headers.location
         maxRedirects: options.maxRedirects-1
         jar: options.jar
+        ended: options.ended
       redirect_options.uri = url.resolve options.href, redirect_options.uri if not is_uri redirect_options.uri
       return quest redirect_options, cb
 
@@ -91,8 +93,20 @@ quest = (options, cb) ->
       catch err
         return req.emit 'error', "Error parsing body as json: #{body}"
       req.emit 'end', null, resp, body
-  req.on 'error', cb
-  req.on 'end', cb
+  setTimeout (() ->
+    req.abort()
+    e = new Error "ETIMEDOUT"
+    e.code = "ETIMEDOUT"
+    req.emit "error", e
+  ), options.timeout if options.timeout
+  req.on 'error', (err) ->
+    if not options.ended.state
+      options.ended.state = true
+      return cb err
+  req.on 'end', (err, resp, body) ->
+    if not options.ended.state
+      options.ended.state = true
+      return cb err, resp, body
   req.write options.body if options.body?
   req.end()
 
