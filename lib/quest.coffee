@@ -55,7 +55,7 @@ quest = (options, cb) ->
   parsed_uri = null
   try parsed_uri = url.parse options.uri # Suppress exceptions from url.parse
   return cb "Failed to parse uri #{options.uri}" if not parsed_uri? # This should never occur
-  _(options).defaults parsed_uri
+  _(options).extend parsed_uri
   _(options.headers).defaults
     'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_3) AppleWebKit/537.16 (KHTML, like Gecko) Chrome/24.0.1297.0 Safari/537.16'
   handle_options options

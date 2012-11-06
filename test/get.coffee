@@ -7,7 +7,7 @@ describe 'quest', ->
   safe_err = (err) ->
     err = new Error err if err? and err not instanceof Error
     err
-  _.each ['https', 'http'], (protocol) ->
+  _.each ['http', 'https'], (protocol) ->
     describe protocol, ->
       it "detects no uri", (done) ->
         @timeout 20000
@@ -205,3 +205,11 @@ describe 'quest', ->
             assert.equal body?.cookies?.my_param2, 'trolling2'
             cb_wf()
         ], (err) -> done safe_err err
+
+      it 'supports changing the port', (done) ->
+        @timeout 20000
+        options =
+          uri: "#{protocol}://httpbin.org:81334/get"
+        quest options, (err, resp, body) ->
+          assert.equal err?.code, "ECONNREFUSED"
+          done()
