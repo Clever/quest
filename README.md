@@ -32,6 +32,18 @@ quest 'www.google.com', (err, response, body) ->
 * `jar` - cookies are enabled by default. set to `false` to disable. optionally pass in your own custom cookie jar (see Cookies below)
 * `timeout` - integer containing the number of milliseconds to wait for a request to respond before aborting the request
 
+The options object is passed in instead of a url string.
+```coffeescript
+quest = require 'quest'
+
+options =
+  uri: 'www.google.com'
+  method: "POST"
+
+quest options, (err, response, body) ->
+  console.log body if not err? and response.statusCode is 200
+```
+
 ## Cookies
 Cookies are enabled by default. This means that if your requests involved redirection, any redirects will contain cookies set prior. To disable cookies, set jar to false.
 
