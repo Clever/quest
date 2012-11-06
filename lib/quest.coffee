@@ -72,10 +72,9 @@ quest = (options, cb) ->
       options.jar.setCookies if _(cookies).isArray() then cookies else [cookies]
     if should_redirect options, resp
       return req.emit 'error', 'Exceeded max redirects' if options.maxRedirects is 0
-      redirect_options = {}
-      _(redirect_options).defaults
+      redirect_options =
         json: options.json? and options.json # Don't send json bodies, but do parse json
-        method = if options.followAllRedirects then 'GET' else options.method
+        method: if options.followAllRedirects then 'GET' else options.method
         uri: resp.headers.location
         maxRedirects: options.maxRedirects-1
         jar: options.jar
