@@ -88,10 +88,7 @@ quest = (options, cb) ->
     resp.on 'data', (part) -> body += part if part?
     resp.on 'end', (part) ->
       body += part if part?
-      try
-        body = JSON.parse body if options.json
-      catch err
-        return req.emit 'error', "Error parsing body as json: #{body}"
+      try body = JSON.parse body if options.json
       req.emit 'end', null, resp, body
   setTimeout (() ->
     req.abort()
