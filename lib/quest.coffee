@@ -74,7 +74,7 @@ quest = (options, cb) ->
     if should_redirect options, resp
       return req.emit 'error', 'Exceeded max redirects' if options.maxRedirects is 0
       redirect_options =
-        json: options.json? and options.json # Don't send json bodies, but do parse json
+        json: if options.json? then true # Don't send json bodies, but do parse json
         method: if options.followAllRedirects then 'GET' else options.method
         uri: resp.headers.location
         maxRedirects: options.maxRedirects-1
