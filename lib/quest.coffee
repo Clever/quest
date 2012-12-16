@@ -24,7 +24,7 @@ handle =
     cookie_string = _(options.jar.getCookies options).map((c) -> c.toValueString()).join '; '
     options.headers.cookie = if not options.headers.cookie? then '' else "#{options.headeers.cookie}; "
     options.headers.cookie = "#{options.headers.cookie}#{cookie_string}"
-handle_options = (options) -> _(_(handle).values()).map (handler) -> handler options
+handle_options = (options) -> _(handle).chain().values().map (handler) -> handler options
 
 is_uri = (uri) -> /^https?:\/\//.test uri
 normalize_uri = (options) -> options.uri = "http://#{options.uri}" if not is_uri options.uri
@@ -66,7 +66,7 @@ quest = (options, cb) ->
   options.method = options.method.toUpperCase()
 
   req = request_module.request options, (resp) ->
-    resp.request = _(_({}).extend(req)).extend options
+    resp.request = _({}).chain().extend(req).extend(options).value()
 
     cookies = resp?.headers?['set-cookie']
     if options.jar isnt false and cookies?
