@@ -34,6 +34,8 @@ should_redirect = (options, resp) ->
   options.method not in ['PUT', 'POST', 'DELETE']))
 
 quest = (options, cb) ->
+  options = if typeof options is "string" then uri: options else options
+
   options.uri = options.url if options.url? and not options.uri?
   return cb 'Options does not include uri' if not options?.uri?
   return cb "Uri #{JSON.stringify options.uri} is not a string" if not _(options.uri).isString()

@@ -50,6 +50,15 @@ describe 'quest', ->
           assert.equal JSON.parse(body)?.headers?.Host, 'httpbin.org'
           done safe_err err
 
+      it "supports simple gets with a uri instead of an options object", (done) ->
+        @timeout 20000
+        uri = "#{protocol}://httpbin.org/get"
+        quest uri, (err, resp, body) ->
+          assert not err, "Has error #{err}"
+          assert.equal resp?.statusCode, 200, "Status code should be 200, is #{resp?.statusCode}"
+          assert.equal JSON.parse(body)?.headers?.Host, 'httpbin.org'
+          done safe_err err
+
       it 'supports interpreting responses as json', (done) ->
         @timeout 20000
         options =
