@@ -188,10 +188,15 @@ describe 'quest', ->
             assert.equal resp?.statusCode, 200, "Status code should be 200, is #{resp?.statusCode}"
             cookies = j.get uri
             assert.equal cookies.length, 2
-            assert.equal cookies[0]?.name, 'my_param'
-            assert.equal cookies[0]?.value, 'trolling'
-            assert.equal cookies[1]?.name, 'my_param2'
-            assert.equal cookies[1]?.value, 'trolling2'
+            my_param = 0
+            my_param2 = 1
+            if cookies[0]?.name is 'my_param2'
+              my_param = 1
+              my_param2 = 0
+            assert.equal cookies[my_param]?.name, 'my_param'
+            assert.equal cookies[my_param]?.value, 'trolling'
+            assert.equal cookies[my_param2]?.name, 'my_param2'
+            assert.equal cookies[my_param2]?.value, 'trolling2'
 
             options =
               uri: "#{protocol}://httpbin.org/cookies"
