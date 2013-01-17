@@ -22,7 +22,7 @@ handle =
     options.body = JSON.stringify options.json
   jar: (options) ->
     cookie_string = _(options.jar.getCookies options).map((c) -> c.toValueString()).join '; '
-    options.headers.cookie = if not options.headers.cookie? then '' else "#{options.headeers.cookie}; "
+    options.headers.cookie = if not options.headers.cookie? then '' else "#{options.headers.cookie}; "
     options.headers.cookie = "#{options.headers.cookie}#{cookie_string}"
 handle_options = (options) -> _(handle).chain().values().map (handler) -> handler options
 
