@@ -85,17 +85,19 @@ quest = (options, cb) ->
       redirect_options.uri = url.resolve options.href, redirect_options.uri if not is_uri redirect_options.uri
       return quest redirect_options, cb
 
-    body = ''
+    body = undefined
     resp.setEncoding 'utf-8'
-    resp.on 'data', (part) -> body += part if part?
+    add_data = (part) ->
+      return if not part?
+      body ?= ''
+      body += part
+    resp.on 'data', add_data
     resp.on 'end', (part) ->
-      body += part if part?
+      add_data part
       try body = JSON.parse body if options.json
-      req.emit 'end', null, resp, body
-    req.on 'end', (err, resp, body) ->
-      if not options.ended.state
-        options.ended.state = true
-        return cb err, resp, body
+      return if options.ended.state
+      options.ended.state = true
+      return cb null, resp, body
   setTimeout (() ->
     req.abort()
     e = new Error "ETIMEDOUT"
@@ -103,9 +105,9 @@ quest = (options, cb) ->
     req.emit "error", e
   ), options.timeout if options.timeout
   req.on 'error', (err) ->
-    if not options.ended.state
-      options.ended.state = true
-      return cb err
+    return if options.ended.state
+    options.ended.state = true
+    return cb err
   req.write options.body if options.body?
   req.end()
 
