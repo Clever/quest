@@ -12,7 +12,8 @@
   },
   "devDependencies": {
     "node-dev": "~0.2.8",
-    "mocha": "~1.6.0"
+    "mocha": "~1.6.0",
+    "nock": "~0.14.4"
   },
   "engines": {
     "node": ">=0.8.x",
