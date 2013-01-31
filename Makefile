@@ -5,6 +5,4 @@ test-cov:
 	NODE_ENV=test TEST_COV=1 node_modules/mocha/bin/mocha --compilers coffee:coffee-script -R html-cov test/get.coffee test/post.coffee | tee coverage.html
 	open coverage.html
 test:
-	NODE_ENV=test node_modules/mocha/bin/mocha --compilers coffee:coffee-script test/get.coffee test/post.coffee
-	# failing
-	# NODE_ENV=test node_modules/mocha/bin/mocha --compilers coffee:coffee-script test/nock.coffee
+	NODE_ENV=test node_modules/mocha/bin/mocha --compilers coffee:coffee-script test/get.coffee test/post.coffee test/nock.coffee

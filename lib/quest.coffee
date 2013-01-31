@@ -92,6 +92,10 @@ quest = (options, cb) ->
       body += part if part?
       try body = JSON.parse body if options.json
       req.emit 'end', null, resp, body
+    req.on 'end', (err, resp, body) ->
+      if not options.ended.state
+        options.ended.state = true
+        return cb err, resp, body
   setTimeout (() ->
     req.abort()
     e = new Error "ETIMEDOUT"
@@ -102,10 +106,6 @@ quest = (options, cb) ->
     if not options.ended.state
       options.ended.state = true
       return cb err
-  req.on 'end', (err, resp, body) ->
-    if not options.ended.state
-      options.ended.state = true
-      return cb err, resp, body
   req.write options.body if options.body?
   req.end()
 
