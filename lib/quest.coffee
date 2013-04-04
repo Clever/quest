@@ -8,17 +8,17 @@ cookiejar = require 'cookiejar'
 handle =
   form: (options) ->
     return if not options.form?
-    options.headers['content-type'] = 'application/x-www-form-urlencoded; charset=utf-8'
+    options.headers['content-type'] = 'application/x-www-form-urlencoded; charset=utf-8' if 'content-type' not of options.headers
     options.body = qs.stringify(options.form).toString 'utf8'
   qs: (options) ->
     return if not options.qs?
     options.path = "#{options.path}?#{qs.stringify options.qs}"
   json: (options) ->
     return if not options.json?
-    options.headers.accept = 'application/json'
+    options.headers.accept = 'application/json' if 'accept' not of options.headers
     # Don't set the body if options.json is true: that just means that there will be a json response
     return if options.json is true
-    options.headers['content-type'] = 'application/json'
+    options.headers['content-type'] = 'application/json' if 'content-type' not of options.headers
     options.body = JSON.stringify options.json
   jar: (options) ->
     cookie_string = _(options.jar.getCookies options).map((c) -> c.toValueString()).join '; '
@@ -54,6 +54,11 @@ quest = (options, cb) ->
     maxRedirects: 10
     jar: new cookiejar.CookieJar
     ended: state: false
+
+  # Normalize headers
+  for key, val of options.headers when key isnt key.toLowerCase()
+    options.headers[key.toLowerCase()] = val
+    delete options.headers[key]
 
   parsed_uri = null
   try parsed_uri = url.parse options.uri # Suppress exceptions from url.parse

@@ -240,3 +240,14 @@ describe 'quest', ->
           # Produces ECONNREFUSED locally but ETIMEDOUT on travis
           # assert.equal err?.code, "ECONNREFUSED"
           done()
+
+      it 'supports overriding content-type with a json body', (done) ->
+        @timeout 20000
+        options =
+          uri: "#{protocol}://httpbin.org/headers"
+          timeout: 10000
+          json: some_field: 'some_val'
+          headers: 'content-type': null
+        quest options, (err, resp, body) ->
+          assert.equal body.headers['Content-Type'], 'null' # httpbin returns all headers as strings
+          done err
