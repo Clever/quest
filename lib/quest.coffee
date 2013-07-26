@@ -7,38 +7,39 @@ cookiejar = require 'cookiejar'
 
 handle =
   form: (options) ->
-    return if not options.form?
-    options.headers['content-type'] = 'application/x-www-form-urlencoded; charset=utf-8' if 'content-type' not of options.headers
+    return unless options.form?
+    if 'content-type' not of options.headers
+      options.headers['content-type'] = 'application/x-www-form-urlencoded; charset=utf-8'
     options.body = qs.stringify(options.form).toString 'utf8'
   qs: (options) ->
-    return if not options.qs?
+    return unless options.qs?
     options.path = "#{options.path}?#{qs.stringify options.qs}"
   json: (options) ->
-    return if not options.json?
+    return unless options.json?
     options.headers.accept = 'application/json' if 'accept' not of options.headers
     # Don't set the body if options.json is true: that just means that there will be a json response
     return if options.json is true
     options.headers['content-type'] = 'application/json' if 'content-type' not of options.headers
     options.body = JSON.stringify options.json
   jar: (options) ->
-    cookie_string = _(options.jar.getCookies options).map((c) -> c.toValueString()).join '; '
+    cookie_string = _(options.jar.getCookies options).invoke('toValueString').join '; '
     options.headers.cookie = if not options.headers.cookie? then '' else "#{options.headers.cookie}; "
     options.headers.cookie = "#{options.headers.cookie}#{cookie_string}"
-handle_options = (options) -> _(handle).chain().values().map (handler) -> handler options
+handle_options = (options) -> _(handle).chain().values().each (handler) -> handler options
 
 is_uri = (uri) -> /^https?:\/\//.test uri
-normalize_uri = (options) -> options.uri = "http://#{options.uri}" if not is_uri options.uri
+normalize_uri = (options) -> options.uri = "http://#{options.uri}" unless is_uri options.uri
 
 should_redirect = (options, resp) ->
   299 < resp.statusCode < 400 and (options.followAllRedirects or (options.followRedirects and
   options.method not in ['PUT', 'POST', 'DELETE']))
 
 quest = (options, cb) ->
-  options = if typeof options is "string" then uri: options else options
+  options = uri: options if _(options).isString()
+  options.uri ?= options.url
 
-  options.uri = options.url if options.url? and not options.uri?
-  return cb 'Options does not include uri' if not options?.uri?
-  return cb "Uri #{JSON.stringify options.uri} is not a string" if not _(options.uri).isString()
+  return cb 'Options does not include uri' unless options?.uri?
+  return cb "Uri #{JSON.stringify options.uri} is not a string" unless _(options.uri).isString()
   options = _.clone options
 
   normalize_uri options
@@ -62,7 +63,7 @@ quest = (options, cb) ->
 
   parsed_uri = null
   try parsed_uri = url.parse options.uri # Suppress exceptions from url.parse
-  return cb "Failed to parse uri #{options.uri}" if not parsed_uri? # This should never occur
+  return cb "Failed to parse uri #{options.uri}" unless parsed_uri? # This should never occur
   _(options).extend parsed_uri
   _(options.headers).defaults
     'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_3) AppleWebKit/537.16 (KHTML, like Gecko) Chrome/24.0.1297.0 Safari/537.16'
@@ -87,14 +88,14 @@ quest = (options, cb) ->
         maxRedirects: options.maxRedirects-1
         jar: options.jar
         ended: options.ended
-      redirect_options.uri = url.resolve options.href, redirect_options.uri if not is_uri redirect_options.uri
+      redirect_options.uri = url.resolve options.href, redirect_options.uri unless is_uri redirect_options.uri
       resp.resume()
       return quest redirect_options, cb
 
     body = undefined
     resp.setEncoding 'utf-8'
     add_data = (part) ->
-      return if not part?
+      return unless part?
       body ?= ''
       body += part
     resp.on 'data', add_data
@@ -104,12 +105,13 @@ quest = (options, cb) ->
       return if options.ended.state
       options.ended.state = true
       return cb null, resp, body
-  setTimeout (() ->
-    req.abort()
-    e = new Error "ETIMEDOUT"
-    e.code = "ETIMEDOUT"
-    req.emit "error", e
-  ), options.timeout if options.timeout
+  if options.timeout
+    setTimeout (() ->
+      req.abort()
+      e = new Error "ETIMEDOUT"
+      e.code = "ETIMEDOUT"
+      req.emit "error", e
+    ), options.timeout
   req.on 'error', (err) ->
     return if options.ended.state
     options.ended.state = true

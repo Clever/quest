@@ -35,7 +35,7 @@ describe 'quest', ->
           uri: "httpbin.org/get"
           json: true
         quest options, (err, resp, body) ->
-          assert not err, "Has error #{err}"
+          assert.ifError err
           assert.equal resp?.statusCode, 200, "Status code should be 200, is #{resp?.statusCode}"
           assert.equal body?.headers?.Host, 'httpbin.org'
           done safe_err err
@@ -45,7 +45,7 @@ describe 'quest', ->
         options =
           uri: "#{protocol}://httpbin.org/get"
         quest options, (err, resp, body) ->
-          assert not err, "Has error #{err}"
+          assert.ifError err
           assert.equal resp?.statusCode, 200, "Status code should be 200, is #{resp?.statusCode}"
           assert.equal JSON.parse(body)?.headers?.Host, 'httpbin.org'
           done safe_err err
@@ -54,7 +54,7 @@ describe 'quest', ->
         @timeout 20000
         uri = "#{protocol}://httpbin.org/get"
         quest uri, (err, resp, body) ->
-          assert not err, "Has error #{err}"
+          assert.ifError err
           assert.equal resp?.statusCode, 200, "Status code should be 200, is #{resp?.statusCode}"
           assert.equal JSON.parse(body)?.headers?.Host, 'httpbin.org'
           done safe_err err
@@ -65,7 +65,7 @@ describe 'quest', ->
           uri: "#{protocol}://httpbin.org/get"
           json: true
         quest options, (err, resp, body) ->
-          assert not err, "Has error #{err}"
+          assert.ifError err
           assert.equal resp?.statusCode, 200, "Status code should be 200, is #{resp?.statusCode}"
           assert.equal body?.headers?.Host, 'httpbin.org'
           done safe_err err
@@ -77,7 +77,7 @@ describe 'quest', ->
           uri: "#{protocol}://httpbin.org/user-agent"
           json: true
         quest options, (err, resp, body) ->
-          assert not err, "Has error #{err}"
+          assert.ifError err
           assert.equal resp?.statusCode, 200, "Status code should be 200, is #{resp?.statusCode}"
           assert.equal body?['user-agent'], default_user_agent
           done safe_err err
@@ -91,7 +91,7 @@ describe 'quest', ->
           headers:
             'user-agent': other_user_agent
         quest options, (err, resp, body) ->
-          assert not err, "Has error #{err}"
+          assert.ifError err
           assert.equal resp?.statusCode, 200, "Status code should be 200, is #{resp?.statusCode}"
           assert.equal body?['user-agent'], other_user_agent
           done safe_err err
@@ -103,7 +103,7 @@ describe 'quest', ->
           qs:
             my_param: 'trolling'
         quest options, (err, resp, body) ->
-          assert not err, "Has error #{err}"
+          assert.ifError err
           assert.equal resp?.statusCode, 200, "Status code should be 200, is #{resp?.statusCode}"
           assert.equal resp?.headers?.my_param, 'trolling', "Parameter should be trolling, is #{resp?.headers?.my_param}"
           done safe_err err
@@ -114,7 +114,7 @@ describe 'quest', ->
           uri: "#{protocol}://httpbin.org/redirect/3"
           followRedirects: false
         quest options, (err, resp, body) ->
-          assert not err, "Has error #{err}"
+          assert.ifError err
           assert.equal resp?.statusCode, 302, "Status code should be 302, is #{resp?.statusCode}"
           assert.equal resp?.headers?.location, '/redirect/2'
           done safe_err err
@@ -125,7 +125,7 @@ describe 'quest', ->
           uri: "#{protocol}://httpbin.org/redirect/3"
           json: true
         quest options, (err, resp, body) ->
-          assert not err, "Has error #{err}"
+          assert.ifError err
           assert.equal resp?.statusCode, 200, "Status code should be 200, is #{resp?.statusCode}"
           assert.equal body?.url, "http://httpbin.org/get"
           done safe_err err
@@ -136,7 +136,7 @@ describe 'quest', ->
           uri: "#{protocol}://httpbin.org/relative-redirect/3"
           followRedirects: false
         quest options, (err, resp, body) ->
-          assert not err, "Has error #{err}"
+          assert.ifError err
           assert.equal resp?.statusCode, 302, "Status code should be 302, is #{resp?.statusCode}"
           assert.equal resp?.headers?.location, '/relative-redirect/2'
           done safe_err err
@@ -147,7 +147,7 @@ describe 'quest', ->
           uri: "#{protocol}://httpbin.org/relative-redirect/3"
           json: true
         quest options, (err, resp, body) ->
-          assert not err, "Has error #{err}"
+          assert.ifError err
           assert.equal resp?.statusCode, 200, "Status code should be 200, is #{resp?.statusCode}"
           assert.equal body?.url, "http://httpbin.org/get"
           done safe_err err
@@ -172,7 +172,7 @@ describe 'quest', ->
           jar: j
           json: true
         quest options, (err, resp, body) ->
-          assert not err, "Has error #{err}"
+          assert.ifError err
           assert.equal resp?.statusCode, 200, "Status code should be 200, is #{resp?.statusCode}"
           assert.equal _(body?.cookies)?.keys()?.length, 1
           assert.equal body?.cookies?.my_param, 'trolling'
