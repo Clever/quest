@@ -116,7 +116,7 @@ describe 'quest', ->
         quest options, (err, resp, body) ->
           assert not err, "Has error #{err}"
           assert.equal resp?.statusCode, 302, "Status code should be 302, is #{resp?.statusCode}"
-          assert.equal resp?.headers?.location, 'http://httpbin.org/redirect/2'
+          assert.equal resp?.headers?.location, '/redirect/2'
           done safe_err err
 
       it 'follows redirects', (done) ->
@@ -138,8 +138,7 @@ describe 'quest', ->
         quest options, (err, resp, body) ->
           assert not err, "Has error #{err}"
           assert.equal resp?.statusCode, 302, "Status code should be 302, is #{resp?.statusCode}"
-          # As far as I can tell this isn't actually a relative redirect...
-          assert.equal resp?.headers?.location, 'http://httpbin.org/relative-redirect/2'
+          assert.equal resp?.headers?.location, '/relative-redirect/2'
           done safe_err err
 
       it 'follows relative redirects', (done) ->
