@@ -12,13 +12,13 @@ describe 'quest', ->
       it "detects no uri", (done) ->
         @timeout 20000
         quest {}, (err, resp, body) ->
-          assert.equal err, 'Options does not include uri'
+          assert.equal err?.message, 'Options does not include uri'
           done()
 
       it "detects non-string uri", (done) ->
         @timeout 20000
         quest {uri: {}}, (err, resp, body) ->
-          assert.equal err, 'Uri {} is not a string'
+          assert.equal err?.message, 'Uri {} is not a string'
           done()
 
       it 'detects request errors', (done) ->
@@ -159,7 +159,7 @@ describe 'quest', ->
           json: true
           maxRedirects: 2
         quest options, (err, resp, body) ->
-          assert.equal err, 'Exceeded max redirects'
+          assert.equal err?.message, 'Exceeded max redirects'
           done()
 
       it 'supports custom cookie jars', (done) ->

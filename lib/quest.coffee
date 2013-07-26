@@ -38,8 +38,8 @@ quest = (options, cb) ->
   options = uri: options if _(options).isString()
   options.uri ?= options.url
 
-  return cb 'Options does not include uri' unless options?.uri?
-  return cb "Uri #{JSON.stringify options.uri} is not a string" unless _(options.uri).isString()
+  return cb new Error 'Options does not include uri' unless options?.uri?
+  return cb new Error "Uri #{JSON.stringify options.uri} is not a string" unless _(options.uri).isString()
   options = _.clone options
 
   normalize_uri options
@@ -63,7 +63,7 @@ quest = (options, cb) ->
 
   parsed_uri = null
   try parsed_uri = url.parse options.uri # Suppress exceptions from url.parse
-  return cb "Failed to parse uri #{options.uri}" unless parsed_uri? # This should never occur
+  return cb new Error "Failed to parse uri #{options.uri}" unless parsed_uri? # This should never occur
   _(options).extend parsed_uri
   _(options.headers).defaults
     'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_3) AppleWebKit/537.16 (KHTML, like Gecko) Chrome/24.0.1297.0 Safari/537.16'
@@ -80,7 +80,7 @@ quest = (options, cb) ->
     if options.jar isnt false and cookies?
       options.jar.setCookies if _(cookies).isArray() then cookies else [cookies]
     if should_redirect options, resp
-      return req.emit 'error', 'Exceeded max redirects' if options.maxRedirects is 0
+      return req.emit 'error', new Error 'Exceeded max redirects' if options.maxRedirects is 0
       redirect_options =
         json: if options.json? then true # Don't send json bodies, but do parse json
         method: if options.followAllRedirects then 'GET' else options.method
