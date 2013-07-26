@@ -40,6 +40,17 @@ describe 'quest', ->
           assert.equal body?.headers?.Host, 'httpbin.org'
           done safe_err err
 
+      it 'supports any case protocol', (done) ->
+        @timeout 20000
+        options =
+          uri: "HTTP://httpbin.org/get"
+          json: true
+        quest options, (err, resp, body) ->
+          assert.ifError err
+          assert.equal resp?.statusCode, 200, "Status code should be 200, is #{resp?.statusCode}"
+          assert.equal body?.headers?.Host, 'httpbin.org'
+          done safe_err err
+
       it 'supports simple gets', (done) ->
         @timeout 20000
         options =

@@ -27,7 +27,7 @@ handle =
     options.headers.cookie = "#{options.headers.cookie}#{cookie_string}"
 handle_options = (options) -> _(handle).chain().values().each (handler) -> handler options
 
-is_uri = (uri) -> /^https?:\/\//.test uri
+is_uri = (uri) -> /^https?:\/\//i.test uri
 normalize_uri = (options) -> options.uri = "http://#{options.uri}" unless is_uri options.uri
 
 should_redirect = (options, resp) ->
@@ -43,7 +43,7 @@ quest = (options, cb) ->
   options = _.clone options
 
   normalize_uri options
-  https_pattern = /^https:/
+  https_pattern = /^https:/i
   request_module = if https_pattern.test options.uri then https else http
 
   _(options).defaults
