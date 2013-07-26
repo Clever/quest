@@ -88,6 +88,7 @@ quest = (options, cb) ->
         jar: options.jar
         ended: options.ended
       redirect_options.uri = url.resolve options.href, redirect_options.uri if not is_uri redirect_options.uri
+      resp.resume()
       return quest redirect_options, cb
 
     body = undefined
