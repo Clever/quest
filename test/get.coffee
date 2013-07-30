@@ -234,10 +234,9 @@ describe 'quest', ->
         @timeout 20000
         options =
           uri: "#{protocol}://httpbin.org:88/get"
-          timeout: 10000
+          timeout: 10
         quest options, (err, resp, body) ->
-          assert err
-          assert.equal err?.code, "ETIMEDOUT"
+          assert.equal err.code, "ETIMEDOUT"
           done()
 
       it 'supports changing the port', (done) ->

@@ -25,7 +25,9 @@ handle =
     cookie_string = _(options.jar.getCookies options).invoke('toValueString').join '; '
     options.headers.cookie = if not options.headers.cookie? then '' else "#{options.headers.cookie}; "
     options.headers.cookie = "#{options.headers.cookie}#{cookie_string}"
-handle_options = (options) -> _(handle).chain().values().each (handler) -> handler options
+handle_options = (options) ->
+  _(handle).chain().values().each (handler) ->
+    handler options
 
 is_uri = (uri) -> /^https?:\/\//i.test uri
 normalize_uri = (options) -> options.uri = "http://#{options.uri}" unless is_uri options.uri

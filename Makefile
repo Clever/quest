@@ -6,3 +6,5 @@ test-cov:
 	open coverage.html
 test:
 	NODE_ENV=test node_modules/mocha/bin/mocha --bail --compilers coffee:coffee-script test/get.coffee test/post.coffee test/nock.coffee
+
+.PHONY: test
