@@ -48,16 +48,6 @@ quest = (options, cb) ->
   https_pattern = /^https:/i
   request_module = if https_pattern.test options.uri then https else http
 
-  _(options).defaults
-    port: if request_module is http then 80 else 443
-    headers: {}
-    method: 'get'
-    followRedirects: true
-    followAllRedirects: false
-    maxRedirects: 10
-    jar: new cookiejar.CookieJar
-    ended: state: false
-
   # Normalize headers
   for key, val of options.headers when key isnt key.toLowerCase()
     options.headers[key.toLowerCase()] = val
@@ -66,7 +56,16 @@ quest = (options, cb) ->
   parsed_uri = null
   try parsed_uri = url.parse options.uri # Suppress exceptions from url.parse
   return cb new Error "Failed to parse uri #{options.uri}" unless parsed_uri? # This should never occur
-  _(options).extend parsed_uri
+  _(options).defaults parsed_uri, {
+    port: if request_module is http then 80 else 443
+    headers: {}
+    method: 'get'
+    followRedirects: true
+    followAllRedirects: false
+    maxRedirects: 10
+    jar: new cookiejar.CookieJar
+    ended: state: false
+  }
   _(options.headers).defaults
     'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_3) AppleWebKit/537.16 (KHTML, like Gecko) Chrome/24.0.1297.0 Safari/537.16'
   handle_options options

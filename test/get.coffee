@@ -260,3 +260,22 @@ describe 'quest', ->
         quest options, (err, resp, body) ->
           assert.equal body.headers['Content-Type'], 'null' # httpbin returns all headers as strings
           done err
+
+      it 'supports sending basic auth in the url', (done) ->
+        options =
+          uri: "#{protocol}://username:password@httpbin.org/headers"
+          json: true
+        quest options, (err, resp, body) ->
+          assert.ifError err
+          assert.equal body.headers.Authorization, 'Basic dXNlcm5hbWU6cGFzc3dvcmQ='
+          done()
+
+      it 'supports sending basic auth in the options', (done) ->
+        options =
+          uri: "#{protocol}://httpbin.org/headers"
+          auth: 'username:password'
+          json: true
+        quest options, (err, resp, body) ->
+          assert.ifError err
+          assert.equal body.headers.Authorization, 'Basic dXNlcm5hbWU6cGFzc3dvcmQ='
+          done()
