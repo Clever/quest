@@ -63,7 +63,7 @@ quest = (options, cb) ->
     followRedirects: true
     followAllRedirects: false
     maxRedirects: 10
-    jar: new cookiejar.CookieJar
+    jar: new cookiejar.CookieJar()
     ended: state: false
   }
   _(options.headers).defaults
@@ -87,8 +87,10 @@ quest = (options, cb) ->
         method: if options.followAllRedirects then 'GET' else options.method
         uri: resp.headers.location
         maxRedirects: options.maxRedirects-1
-        jar: options.jar
-        ended: options.ended
+      extend_maybe = (params...) ->
+        redirect_options[param] = options[param] for param in params when options[param]?
+      extend_maybe 'jar', 'ended', 'pfx', 'key', 'passphrase', 'cert', 'ca', 'ciphers', 'agent',
+        'rejectUnauthorized'
       redirect_options.uri = url.resolve options.href, redirect_options.uri unless is_uri redirect_options.uri
       resp.resume()
       return quest redirect_options, cb
