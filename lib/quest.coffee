@@ -29,7 +29,7 @@ handle_options = (options) ->
   _(handle).chain().values().each (handler) ->
     handler options
 
-is_uri = (uri) -> /^https?:\/\//i.test uri
+is_uri = (uri) -> (/^https?:\/\//i).test uri
 normalize_uri = (options) -> options.uri = "http://#{options.uri}" unless is_uri options.uri
 
 should_redirect = (options, resp) ->
@@ -90,7 +90,7 @@ quest = (options, cb) ->
       extend_maybe = (params...) ->
         redirect_options[param] = options[param] for param in params when options[param]?
       extend_maybe 'jar', 'ended', 'pfx', 'key', 'passphrase', 'cert', 'ca', 'ciphers', 'agent',
-        'rejectUnauthorized'
+        'rejectUnauthorized', 'secureProtocol'
       redirect_options.uri = url.resolve options.href, redirect_options.uri unless is_uri redirect_options.uri
       resp.resume()
       return quest redirect_options, cb

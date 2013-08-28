@@ -1,7 +1,7 @@
 {
   "name": "quest",
   "description": "simple request library for node",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "author": "clever team <tech@getclever.com>",
   "dependencies": {
     "underscore": "~1.4.2",
