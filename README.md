@@ -19,7 +19,8 @@ quest 'www.google.com', (err, response, body) ->
 ```
 
 ## Supported options
-* `uri` - fully qualified uri (e.g. http://google.com). if protocol is left off, assumes http://
+* `uri` - fully qualified uri (e.g. http://google.com). if protocol is left off, assumes http://. may include basic auth
+* `auth` - a string of the form `username:password` to be used for http basic auth
 * `qs` - object containing querystring values to be appended to the uri
 * `method` - http method, defaults to GET
 * `headers` - http headers, defaults to {}
