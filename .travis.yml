@@ -3,5 +3,6 @@ node_js:
   - 0.10
   - 0.8
   - 0.6
-email:
-  - tech-notify@getclever.com
+notifications:
+  email:
+    - tech-notify@getclever.com
