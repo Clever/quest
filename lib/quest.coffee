@@ -2,6 +2,7 @@ qs        = require 'qs'
 http      = require 'http'
 https     = require 'https'
 _         = require 'underscore'
+_.mixin     require 'underscore.deep'
 url       = require 'url'
 cookiejar = require 'cookiejar'
 
@@ -38,11 +39,11 @@ should_redirect = (options, resp) ->
 
 quest = (options, cb) ->
   options = uri: options if _(options).isString()
+  options = _.deepClone options
   options.uri ?= options.url
 
   return cb new Error 'Options does not include uri' unless options?.uri?
   return cb new Error "Uri #{JSON.stringify options.uri} is not a string" unless _(options.uri).isString()
-  options = _.clone options
 
   normalize_uri options
   https_pattern = /^https:/i

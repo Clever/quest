@@ -5,6 +5,7 @@
   "author": "clever team <tech@getclever.com>",
   "dependencies": {
     "underscore": "~1.4.2",
+    "underscore.deep": "~0.0.5",
     "coffee-script": "~1.6.2",
     "async": "~0.2.7",
     "qs": "~0.5.1",
