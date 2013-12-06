@@ -23,7 +23,8 @@ handle =
     options.headers['content-type'] = 'application/json' if 'content-type' not of options.headers
     options.body = JSON.stringify options.json
   jar: (options) ->
-    cookie_string = _(options.jar.getCookies options).invoke('toValueString').join '; '
+    access_info = { domain: options.host, path: options.pathname }
+    cookie_string = _(options.jar.getCookies access_info).invoke('toValueString').join '; '
     options.headers.cookie = if not options.headers.cookie? then '' else "#{options.headers.cookie}; "
     options.headers.cookie = "#{options.headers.cookie}#{cookie_string}"
 handle_options = (options) ->
@@ -127,7 +128,9 @@ quest = (options, cb) ->
 quest.jar = () ->
   jar = cookiejar.CookieJar()
   jar.add = jar.setCookie
-  jar.get = (uri) -> jar.getCookies url.parse uri
+  jar.get = (uri) ->
+    parts = url.parse uri
+    jar.getCookies { domain: parts.host, path: parts.pathname }
   jar
 quest.cookie = cookiejar.Cookie
 module.exports = quest
