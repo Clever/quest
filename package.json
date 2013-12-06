@@ -3,6 +3,7 @@
   "description": "simple request library for node",
   "version": "0.2.6",
   "author": "clever team <tech@getclever.com>",
+  "repository": "https://github.com/Clever/quest",
   "dependencies": {
     "underscore": "~1.4.2",
     "underscore.deep": "~0.0.5",
