@@ -13,7 +13,7 @@ describe 'nock', ->
       done()
 
   it 'supports cookies with a domain', (done) ->
-    nock('http://example.com')
+    scope = nock('http://example.com')
       .matchHeader('cookie', 'cookie=test')
       .get('/test')
       .reply(200, '')
@@ -21,10 +21,11 @@ describe 'nock', ->
     j.add quest.cookie 'cookie=test; domain=example.com'
     quest { uri: 'http://example.com/test', jar: j }, (err, resp, body) ->
       assert.ifError err, "did not expect error"
+      scope.done()
       done()
 
   it 'supports cookies with a wildcard domain', (done) ->
-    nock('http://test.example.com')
+    scope = nock('http://test.example.com')
       .matchHeader('cookie', 'cookie=test')
       .get('/test')
       .reply(200, '')
@@ -32,10 +33,11 @@ describe 'nock', ->
     j.add quest.cookie 'cookie=test; domain=.example.com'
     quest { uri: 'http://test.example.com/test', jar: j }, (err, resp, body) ->
       assert.ifError err, "did not expect error"
+      scope.done()
       done()
 
   it 'does not send cookies to the wrong domain', (done) ->
-    nock('http://test.example.com')
+    scope = nock('http://test.example.com')
       .matchHeader('cookie', 'cookie=test')
       .get('/test')
       .reply(200, '')
@@ -43,6 +45,7 @@ describe 'nock', ->
     j.add quest.cookie 'cookie=test; domain=.example.com'
     j.add quest.cookie 'badcookie=bad; domain=example.com'
     j.add quest.cookie 'badcookie2=bad; domain=nottest.example.com'
-    quest { uri: 'http://example.com/test', jar: j }, (err, resp, body) ->
+    quest { uri: 'http://test.example.com/test', jar: j }, (err, resp, body) ->
       assert.ifError err, "did not expect error"
+      scope.done()
       done()
