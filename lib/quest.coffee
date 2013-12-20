@@ -43,7 +43,7 @@ quest = (options, cb) ->
   options = _.deepClone options
   options.uri ?= options.url
 
-  ended = false
+  cb = _(cb).once()
 
   return cb new Error 'Options does not include uri' unless options?.uri?
   return cb new Error "Uri #{JSON.stringify options.uri} is not a string" unless _(options.uri).isString()
@@ -60,7 +60,7 @@ quest = (options, cb) ->
   parsed_uri = null
   try parsed_uri = url.parse options.uri # Suppress exceptions from url.parse
   return cb new Error "Failed to parse uri #{options.uri}" unless parsed_uri? # This should never occur
-  _(options).defaults parsed_uri, {
+  _(options).defaults parsed_uri,
     port: if request_module is http then 80 else 443
     headers: {}
     method: 'get'
@@ -68,7 +68,7 @@ quest = (options, cb) ->
     followAllRedirects: false
     maxRedirects: 10
     jar: new cookiejar.CookieJar()
-  }
+
   _(options.headers).defaults
     'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_3) AppleWebKit/537.16 (KHTML, like Gecko) Chrome/24.0.1297.0 Safari/537.16'
   handle_options options
@@ -96,9 +96,7 @@ quest = (options, cb) ->
         'rejectUnauthorized', 'secureProtocol'
       redirect_options.uri = url.resolve options.href, redirect_options.uri unless is_uri redirect_options.uri
       resp.resume()
-      return quest redirect_options, (args...) ->
-        ended = true
-        cb args...
+      return quest redirect_options, cb
 
     body = undefined
     resp.setEncoding 'utf-8'
@@ -110,9 +108,7 @@ quest = (options, cb) ->
     resp.on 'end', (part) ->
       add_data part
       try body = JSON.parse body if options.json
-      return if ended
-      ended = true
-      return cb null, resp, body
+      cb null, resp, body
   if options.timeout
     setTimeout ->
       req.abort()
@@ -120,10 +116,7 @@ quest = (options, cb) ->
       e.code = "ETIMEDOUT"
       req.emit "error", e
     , options.timeout
-  req.on 'error', (err) ->
-    return if ended
-    ended = true
-    return cb err
+  req.on 'error', cb
   req.write options.body if options.body?
   req.end()
 
