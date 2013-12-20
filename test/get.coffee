@@ -237,7 +237,20 @@ describe 'quest', ->
           timeout: 10
         quest options, (err, resp, body) ->
           assert.equal err.code, "ETIMEDOUT"
-          done()
+          setTimeout done, 100
+
+      it 'only calls the callback once on timeout redirects', (done) ->
+        @timeout 20000
+        cnt = 0
+        options =
+          uri: "#{protocol}://httpbin.org/redirect/1"
+          timeout: 1500
+        quest options, (err, resp, body) ->
+          cnt += 1
+          assert.equal cnt, 1
+          assert.ifError err
+          assert.equal resp.statusCode, 200
+          setTimeout done, 3000
 
       it 'supports changing the port', (done) ->
         @timeout 20000
