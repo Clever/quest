@@ -35,7 +35,7 @@ normalize_uri = (options) -> options.uri = "http://#{options.uri}" unless is_uri
 
 should_redirect = (options, resp) ->
   299 < resp.statusCode < 400 and (options.followAllRedirects or (options.followRedirects and
-  options.method not in ['PUT', 'POST', 'DELETE']))
+  options.method not in ['PATCH', 'PUT', 'POST', 'DELETE']))
 
 quest = (options, cb) ->
   options = uri: options if _(options).isString()
