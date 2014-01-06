@@ -23,7 +23,8 @@ handle =
     options.headers['content-type'] = 'application/json' if 'content-type' not of options.headers
     options.body = JSON.stringify options.json
   jar: (options) ->
-    cookie_string = _(options.jar.getCookies options).invoke('toValueString').join '; '
+    access_info = { domain: options.host, path: options.pathname }
+    cookie_string = _(options.jar.getCookies access_info).invoke('toValueString').join '; '
     options.headers.cookie = if not options.headers.cookie? then '' else "#{options.headers.cookie}; "
     options.headers.cookie = "#{options.headers.cookie}#{cookie_string}"
 handle_options = (options) ->
@@ -42,6 +43,8 @@ quest = (options, cb) ->
   options = _.deepClone options
   options.uri ?= options.url
 
+  cb = _(cb).once()
+
   return cb new Error 'Options does not include uri' unless options?.uri?
   return cb new Error "Uri #{JSON.stringify options.uri} is not a string" unless _(options.uri).isString()
 
@@ -57,7 +60,7 @@ quest = (options, cb) ->
   parsed_uri = null
   try parsed_uri = url.parse options.uri # Suppress exceptions from url.parse
   return cb new Error "Failed to parse uri #{options.uri}" unless parsed_uri? # This should never occur
-  _(options).defaults parsed_uri, {
+  _(options).defaults parsed_uri,
     port: if request_module is http then 80 else 443
     headers: {}
     method: 'get'
@@ -65,8 +68,7 @@ quest = (options, cb) ->
     followAllRedirects: false
     maxRedirects: 10
     jar: new cookiejar.CookieJar()
-    ended: state: false
-  }
+
   _(options.headers).defaults
     'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_3) AppleWebKit/537.16 (KHTML, like Gecko) Chrome/24.0.1297.0 Safari/537.16'
   handle_options options
@@ -87,7 +89,7 @@ quest = (options, cb) ->
         json: if options.json? then true # Don't send json bodies, but do parse json
         method: if options.followAllRedirects then 'GET' else options.method
         uri: resp.headers.location
-        maxRedirects: options.maxRedirects-1
+        maxRedirects: options.maxRedirects - 1
       extend_maybe = (params...) ->
         redirect_options[param] = options[param] for param in params when options[param]?
       extend_maybe 'jar', 'ended', 'pfx', 'key', 'passphrase', 'cert', 'ca', 'ciphers', 'agent',
@@ -106,28 +108,25 @@ quest = (options, cb) ->
     resp.on 'end', (part) ->
       add_data part
       try body = JSON.parse body if options.json
-      return if options.ended.state
-      options.ended.state = true
-      return cb null, resp, body
+      cb null, resp, body
   if options.timeout
-    setTimeout (() ->
+    setTimeout ->
       req.abort()
       e = new Error "ETIMEDOUT"
       e.code = "ETIMEDOUT"
       req.emit "error", e
-    ), options.timeout
-  req.on 'error', (err) ->
-    return if options.ended.state
-    options.ended.state = true
-    return cb err
+    , options.timeout
+  req.on 'error', cb
   req.write options.body if options.body?
   req.end()
 
 # Make our jar support the same interface as request's
-quest.jar = () ->
+quest.jar = ->
   jar = cookiejar.CookieJar()
   jar.add = jar.setCookie
-  jar.get = (uri) -> jar.getCookies url.parse uri
+  jar.get = (uri) ->
+    parts = url.parse uri
+    jar.getCookies { domain: parts.host, path: parts.pathname }
   jar
 quest.cookie = cookiejar.Cookie
 module.exports = quest
