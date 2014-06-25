@@ -1,6 +1,6 @@
 # Quest - massively simplified, super lightweight HTTP requests
 
-[![Build Status](https://travis-ci.org/Clever/quest.png)](https://travis-ci.org/Clever/quest)
+![Build Status](https://drone.ops.clever.com/github.com/Clever/quest/status.svg?branch=master)
 
 ## Install
 
