@@ -138,7 +138,7 @@ describe 'quest', ->
         quest options, (err, resp, body) ->
           assert.ifError err
           assert.equal resp?.statusCode, 200, "Status code should be 200, is #{resp?.statusCode}"
-          assert.equal body?.url, "http://httpbin.org/get"
+          assert.equal body?.url, "#{protocol}://httpbin.org/get"
           done safe_err err
 
       it "doesn't follow relative redirects when disabled", (done) ->
@@ -160,7 +160,7 @@ describe 'quest', ->
         quest options, (err, resp, body) ->
           assert.ifError err
           assert.equal resp?.statusCode, 200, "Status code should be 200, is #{resp?.statusCode}"
-          assert.equal body?.url, "http://httpbin.org/get"
+          assert.equal body?.url, "#{protocol}://httpbin.org/get"
           done safe_err err
 
       it 'has a maximum number of redirects', (done) ->
