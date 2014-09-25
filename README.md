@@ -26,7 +26,7 @@ quest 'www.google.com', (err, response, body) ->
 * `headers` - http headers, defaults to {}
 * `body` - entity body for POST and PUT requests. must be string
 * `form` - object containing form values to send in the body. also adds `content-type: application/x-www-form-urlencoded; charset=utf-8` to the header
-* `json` - if true, parses response as JSON. if object, additionally sends JSON representation of the object in tne body and adds `content-type: application/json` to the header
+* `json` - if true, parses response as JSON. if object, additionally sends JSON representation of the object in the body and adds `content-type: application/json` to the header
 * `followRedirects` - follow HTTP 3xx responses as redirects. defaults to true
 * `followAllRedirects` - follow non-GET HTTP 3xx responses as redirects. defaults to false
 * `maxRedirects` - the maximum number of redirects to follow. defaults to 10
