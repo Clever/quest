@@ -107,7 +107,7 @@ quest = (options, cb) ->
     resp.on 'end', (part) ->
       add_data part
       body = Buffer.concat(parts)
-      body = body.toString("utf8") unless options.pdf
+      body = body.toString("utf8") unless options.raw
       try body = JSON.parse body if options.json
       cb null, resp, body
   if options.timeout

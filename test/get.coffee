@@ -300,7 +300,7 @@ describe 'quest', ->
       it 'supports downloading pdfs', (done) ->
         options =
           url: "https://www.adobe.com/pdf/pdfs/ISO32000-1PublicPatentLicense.pdf"
-          pdf: true
+          raw: true
         quest options, (err, resp, body) ->
           assert.ifError err
           done()
