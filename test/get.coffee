@@ -127,7 +127,7 @@ describe 'quest', ->
         quest options, (err, resp, body) ->
           assert.ifError err
           assert.equal resp?.statusCode, 302, "Status code should be 302, is #{resp?.statusCode}"
-          assert.equal resp?.headers?.location, '/redirect/2'
+          assert.equal resp?.headers?.location, '/relative-redirect/2'
           done safe_err err
 
       it 'follows redirects', (done) ->
