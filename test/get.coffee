@@ -127,7 +127,7 @@ describe 'quest', ->
         quest options, (err, resp, body) ->
           assert.ifError err
           assert.equal resp?.statusCode, 302, "Status code should be 302, is #{resp?.statusCode}"
-          assert.equal resp?.headers?.location, '/redirect/2'
+          assert.equal resp?.headers?.location, '/relative-redirect/2'
           done safe_err err
 
       it 'follows redirects', (done) ->
@@ -291,4 +291,16 @@ describe 'quest', ->
         quest options, (err, resp, body) ->
           assert.ifError err
           assert.equal body.headers.Authorization, 'Basic dXNlcm5hbWU6cGFzc3dvcmQ='
+          done()
+
+      # although this test tests whether or not the pdf was downloaded without error, 
+      # it does not verify whether the document is rendered correctly by a pdf viewer
+      # verifying that the downloaded pdf is enocded correctly was done by downloading
+      # the pdf and opening it in Chrome and Preview on Mac OS.
+      it 'supports downloading pdfs', (done) ->
+        options =
+          url: "https://www.adobe.com/pdf/pdfs/ISO32000-1PublicPatentLicense.pdf"
+          raw: true
+        quest options, (err, resp, body) ->
+          assert.ifError err
           done()
