@@ -99,14 +99,15 @@ quest = (options, cb) ->
       return quest redirect_options, cb
 
     body = undefined
-    resp.setEncoding 'utf-8'
+    parts = []
     add_data = (part) ->
       return unless part?
-      body ?= ''
-      body += part
+      parts.push part
     resp.on 'data', add_data
     resp.on 'end', (part) ->
       add_data part
+      body = Buffer.concat(parts)
+      body = body.toString("utf8") unless options.pdf
       try body = JSON.parse body if options.json
       cb null, resp, body
   if options.timeout
