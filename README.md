@@ -1,12 +1,12 @@
 # Quest - massively simplified, super lightweight HTTP requests
 
-![Build Status](https://drone.ops.clever.com/github.com/Clever/quest/status.svg?branch=master)
+[![Build Status](https://ci.ops.clever.com/api/badge/github.com/Clever/quest/status.svg?style=flat&branch=master)](https://ci.ops.clever.com/github.com/Clever/quest)
 
 ## Install
 
-<pre>
-  npm install quest
-</pre>
+```
+npm install quest
+```
 
 ## Super simple to use
 
