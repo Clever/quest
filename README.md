@@ -67,18 +67,6 @@ quest {uri: 'www.google.com', jar: j}, (err, resp, body) ->
   # The request to Google was sent with the cookie that you specified
 ```
 
-## Promises
-Quest also supports [ES6 Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise).
-```coffeescript
-quest = require 'quest'
-
-quest 'www.google.com'
-  .then (response) ->
-    console.log response.body if response.statusCode is 200
-  , (err) ->
-    console.log err
-```
-
 ## Vs. request
 Clever wrote quest after we had decided we'd spent too long diagnosing bugs in the third-party `request` module for node. It should be a drop-in replacement. What are the advantages of quest?
 
