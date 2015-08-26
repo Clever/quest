@@ -304,3 +304,4 @@ describe 'quest', ->
         quest options, (err, resp, body) ->
           assert.ifError err
           done()
+
