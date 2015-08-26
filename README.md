@@ -77,14 +77,14 @@ options =
   method: "POST"
 
 quest options
-  .then (response)
+  .then (response) ->
     console.log response.body if response.statusCode is 200
   , (err) ->
     console.log err
 
 # coffeescript 1.6.x syntax - will break without the parentheses
 quest(options)
-  .then (response)
+  .then (response) ->
     console.log response.body if response.statusCode is 200
   , (err) ->
     console.log err
