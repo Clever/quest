@@ -68,27 +68,15 @@ quest {uri: 'www.google.com', jar: j}, (err, resp, body) ->
 ```
 
 ## Promises
-Quest also supports [ES6 Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise). However, make sure coffeescript is fully up to date. Older versions of coffeescript (e.g. 1.6.x) require parentheses for quest to correctly return Promise objects
+Quest also supports [ES6 Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise).
 ```coffeescript
 quest = require 'quest'
 
-options =
-  uri: 'www.google.com'
-  method: "POST"
-
-quest options
+quest 'www.google.com'
   .then (response) ->
     console.log response.body if response.statusCode is 200
   , (err) ->
     console.log err
-
-# coffeescript 1.6.x syntax - will break without the parentheses
-quest(options)
-  .then (response) ->
-    console.log response.body if response.statusCode is 200
-  , (err) ->
-    console.log err
-
 ```
 
 ## Vs. request
