@@ -5,12 +5,13 @@
   "author": "clever team <tech@getclever.com>",
   "repository": "https://github.com/Clever/quest",
   "dependencies": {
-    "underscore": "~1.4.2",
-    "underscore.deep": "~0.0.5",
-    "coffee-script": "~1.6.2",
     "async": "~0.2.7",
+    "coffee-script": "~1.6.2",
+    "cookiejar": "~1.3.0",
+    "es6-promise": "^3.0.2",
     "qs": "~0.5.1",
-    "cookiejar": "~1.3.0"
+    "underscore": "~1.4.2",
+    "underscore.deep": "~0.0.5"
   },
   "devDependencies": {
     "node-dev": "~0.2.8",
