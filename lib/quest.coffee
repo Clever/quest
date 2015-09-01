@@ -5,6 +5,7 @@ _         = require 'underscore'
 _.mixin     require 'underscore.deep'
 url       = require 'url'
 cookiejar = require 'cookiejar'
+Promise   = require('es6-promise').Promise
 
 handle =
   form: (options) ->
@@ -39,6 +40,13 @@ should_redirect = (options, resp) ->
   options.method not in ['PATCH', 'PUT', 'POST', 'DELETE']))
 
 quest = (options, cb) ->
+  unless cb
+    return new Promise (resolve, reject) ->
+      quest options, (err, response, body) ->
+        return reject(err) if err?
+        response.body = body
+        resolve(response)
+
   options = uri: options if _(options).isString()
   options = _.deepClone options
   options.uri ?= options.url

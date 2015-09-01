@@ -8,6 +8,16 @@ notify:
     on_started: false
     on_success: false
     webhook_url: $$slack_webhook
+publish:
+  npm:
+    email: $$npm_drone_email
+    password: $$npm_drone_password
+    registry: https://clever.registry.nodejitsu.com
+    username: $$npm_drone_username
+    when:
+      branch: master
 script:
 - npm install
 - npm test
+- nvm install 0.10.29
+- nvm use 0.10.29
