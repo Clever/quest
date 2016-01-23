@@ -7,4 +7,14 @@ test-cov:
 test:
 	NODE_ENV=test node_modules/mocha/bin/mocha --bail --compilers coffee:coffee-script/register test/get.coffee test/post.coffee test/nock.coffee test/promise.coffee
 
+LIBS=$(shell find . -regex "^./lib\/.*\.coffee\$$" | sed s/\.coffee$$/\.js/ | sed s/lib/lib-js/)
+
+lib-js/%.js : lib/%.coffee
+	node_modules/coffee-script/bin/coffee --bare -c -o $(@D) $(patsubst lib-js/%,lib/%,$(patsubst %.js,%.coffee,$@))
+
+build: $(LIBS)
+
 .PHONY: test
+
+clean:
+	rm -rf lib-js
