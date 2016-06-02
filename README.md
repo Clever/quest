@@ -31,7 +31,7 @@ quest 'www.google.com', (err, response, body) ->
 * `followAllRedirects` - follow non-GET HTTP 3xx responses as redirects. defaults to false
 * `maxRedirects` - the maximum number of redirects to follow. defaults to 10
 * `jar` - cookies are enabled by default. set to `false` to disable. optionally pass in your own custom cookie jar (see Cookies below)
-* `timeout` - integer containing the number of milliseconds to wait for a request to respond before aborting the request
+* `timeout` - integer containing the number of milliseconds to wait for a request to respond before aborting the request. defaults to 10000.
 
 The options object is passed in instead of a url string.
 ```coffeescript
