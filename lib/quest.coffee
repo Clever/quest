@@ -76,6 +76,7 @@ quest = (options, cb) ->
     followAllRedirects: false
     maxRedirects: 10
     jar: new cookiejar.CookieJar()
+    timeout: 10000
 
   _(options.headers).defaults
     'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_3) AppleWebKit/537.16 (KHTML, like Gecko) Chrome/24.0.1297.0 Safari/537.16'
