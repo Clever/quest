@@ -255,7 +255,7 @@ describe 'quest', ->
       it 'supports changing the port', (done) ->
         @timeout 20000
         options =
-          uri: "#{protocol}://httpbin.org:81334/get"
+          uri: "#{protocol}://httpbin.org:65334/get"
           timeout: 10000
         quest options, (err, resp, body) ->
           assert err
