@@ -110,6 +110,8 @@ quest = (options, cb) ->
     parts = []
     add_data = (part) ->
       return unless part?
+      if typeof part == "string"
+        part = Buffer.from(part)
       parts.push part
     resp.on 'data', add_data
     resp.on 'end', (part) ->
