@@ -14,9 +14,9 @@
     "qs": "~1.0.0"
   },
   "devDependencies": {
-    "node-dev": "~0.2.8",
-    "mocha": "~1.6.0",
-    "nock": "~0.14.4"
+    "mocha": "^2.5.3",
+    "nock": "~0.14.4",
+    "node-dev": "~0.2.8"
   },
   "engines": {
     "node": ">=0.8.x",
